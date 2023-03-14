@@ -24,7 +24,7 @@ export type userStore = {
     removeUser: () => void
 }
 
-export const useUserStore = create<userStore>((set, get) => ({
+const useUserStore = create<userStore>((set, get) => ({
     user: {
         accountType: "",
         bio: "",
@@ -57,3 +57,5 @@ export const useUserStore = create<userStore>((set, get) => ({
         })
     },
 }));
+
+export default useUserStore;

@@ -2,20 +2,34 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import { useRouter } from 'next/router'
-import { useAccessTokenStore, userStore, useUserStore } from '@/components/store'
+import useUserStore, { useAccessTokenStore, userStore } from '@/components/store'
 import { useEffect } from 'react'
+import { useCookies } from 'react-cookie'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const router = useRouter()
-  const accessToken = useAccessTokenStore((state: any) => state.access_token);
+  const [cookie, setCookie] = useCookies(["cookieToken"])
+  const user = useUserStore((state) => state.user);
+
+  const checkToken = async () => {
+    if (cookie.cookieToken == null) {
+      router.replace("/signin")
+    }
+  }
+
+  const checkUserDataIfNotPresentFetch = async () => {
+    if (user.email == "") {
+
+    }
+  }
 
   useEffect(() => {
-    if (!accessToken) {
-      router.replace("/signin");
-    }
-  }, [])
+    checkToken()
+
+    checkUserDataIfNotPresentFetch();
+  }, [cookie])
 
 
   return (
@@ -27,7 +41,7 @@ export default function Home() {
         <link rel="icon" href="/1200px-Instagram.svg.png" />
       </Head>
       <main>
-
+        <button onClick={() => console.log(user)}>Click Me</button>
       </main>
     </>
   )

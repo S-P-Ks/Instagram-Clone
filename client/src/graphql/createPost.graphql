@@ -1,0 +1,37 @@
+query getALLPosts {
+  getALLPosts {
+    id
+    images
+    caption
+  }
+}
+
+query getPostByID($id: ID) {
+  getPostByID(id: $id) {
+    id
+    images
+    caption
+  }
+}
+
+mutation createPost($images: [String], $caption: String!) {
+  createPost(images: $images, caption: $caption) {
+    id
+    images
+    caption
+  }
+}
+
+mutation updatePost($id: ID, $images: [String], $caption: String!) {
+  updatePost(id: $id, images: $images, caption: $caption) {
+    id
+    images
+    caption
+  }
+}
+
+mutation deletePost($id: ID) {
+  deletePost(id: $id) {
+    deleted
+  }
+}

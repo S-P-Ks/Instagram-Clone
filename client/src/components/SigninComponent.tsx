@@ -4,7 +4,7 @@ import styles from "../styles/SignUp.module.css"
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Login, queryClient, SignUp } from "../api"
-import { useAccessTokenStore, userStore, useUserStore } from '@/components/store'
+import useUserStore, { useAccessTokenStore, userStore } from '@/components/store'
 
 function SignInComponent({ role }: { role: string }) {
     const [signIn, setSignIn] = useState(true)
@@ -48,7 +48,7 @@ function SignInComponent({ role }: { role: string }) {
 
         if (signIn) {
             try {
-                var { login } = await queryClient.fetchQuery("login", () => Login({ email: e, password: pass }));
+                var { login } = await queryClient.fetchQuery("login", () => Login({ email: e, password: pass }), { meta: { headers: { "Access-Control-Allow-Credentials": true } } });
                 setAccessToken(login!["access_token"]);
                 addUser(login!["user"]!);
                 router.push("/")
@@ -56,30 +56,13 @@ function SignInComponent({ role }: { role: string }) {
 
             }
         } else {
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/user`, {
-                username: usern,
-                email: e,
-                password: pass,
-                role: role
-            }, {
-                withCredentials: true,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(({ data }) => {
-                SetMessage("", true)
-
-                localStorage.setItem("user", JSON.stringify(data))
-                // dispatch(setUserData({ id: parseInt(data.id), email: data.email, access_token: data.access_token, username: data.username, photo: data.photo }))
+            try {
+                var { createUser } = await queryClient.fetchQuery("signUp", () => SignUp({ name: usern, email: e, password: pass, accountType: "user", bio: "" }));
+                addUser(createUser!);
                 router.push("/")
-            }).catch(err => {
-                console.log(err)
-                if (err.response.status == 403) {
-                    SetMessage("Username and Email should be unique.", false)
-                } else if (err.response.status == 400) {
-                    SetMessage("All the fields are compulsory", false)
-                }
-            })
+            } catch (error) {
+
+            }
         }
     }
 
